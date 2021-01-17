@@ -98,3 +98,13 @@ ps = torch.exp(logps) #with the exponential ps contains the probability for each
 print(ps)
 #----------
 
+#accuracy calculation on the test set
+with torch.no_grad():
+    logps = model.forward(images.view(images.shape[0],-1))
+ps = torch.exp(logps)
+top_ps, top_classes= ps.topk(1)
+
+accuracy=torch.mean((top_classes==labels.view(*top_classes.shape)).type(torch.FloatTensor))
+
+print(accuracy)
+
