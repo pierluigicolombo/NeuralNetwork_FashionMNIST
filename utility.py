@@ -22,6 +22,9 @@ def train_model(model, optimizer, criterion, trainloader, testloader, epochs):
             
             # Turn off gradients for validation, saves memory and computations
             with torch.no_grad():
+
+                # set model to evaluation mode
+                model.eval()
                 for images, labels in testloader:
                     log_ps = model(images.view(images.shape[0],-1))
                     test_loss += criterion(log_ps, labels)
@@ -30,7 +33,9 @@ def train_model(model, optimizer, criterion, trainloader, testloader, epochs):
                     top_p, top_class = ps.topk(1, dim=1)
                     equals = top_class == labels.view(*top_class.shape)
                     accuracy += torch.mean(equals.type(torch.FloatTensor))
-                    
+
+            # set model back to train mode
+            model.train()        
             train_losses.append(running_loss/len(trainloader))
             test_losses.append(test_loss/len(testloader))
             test_accuracy.append(accuracy/len(testloader))
